@@ -1,5 +1,9 @@
 import * as THREE from './lib/three.module.min.js'
 import { OrbitControls } from './lib/OrbitControls.js'
+import { octomap2json } from './services/conversion_service.js'
+
+// ____________________________________________________________________________
+// Three.js setup
 
 const canvas = document.getElementById('viewer');
 const renderer = new THREE.WebGLRenderer({ canvas });
@@ -25,27 +29,31 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
+
 animate();
 
-document.getElementById('file-input').addEventListener('change', async (event) => {
-  // Get map file data from input
+
+// ____________________________________________________________________________
+// Control functions
+
+document.getElementById('file-input').onchange = handleFileInput;
+
+async function handleFileInput(event) {
+  // Get file; halt handling if none
   const file = event.target.files[0];
   if (!file) return;
-
-  // Set file as form data 
-  const formData = new FormData();
-  formData.append('file', file);
-
-  // Request converted map (.ot --> .json)
-  const res = await fetch('/convert/', {
-    method: 'POST',
-    body: formData
-  });
-
-  // Render result
-  const json = await res.json();
-  renderVoxels(json.voxels, json.resolution);
-});
+  // Attempt conversion
+  try {
+    const json = await octomap2json(file);
+    if (json?.voxels && json?.resolution) {
+      renderVoxels(json.voxels, json.resolution);
+    } else {
+      console.error("Invalid JSON response:", json);
+    }
+  } catch (err) {
+    console.error("Conversion error:", err);
+  }
+}
 
 function renderVoxels(voxels, res) {
   // Clear scene but keep grid and axes
