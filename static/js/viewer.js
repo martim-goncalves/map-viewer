@@ -12,7 +12,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf0f0f0);
 
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+const camera = new THREE.PerspectiveCamera(
+  60, window.innerWidth / window.innerHeight, 0.1, 100
+);
 camera.position.set(5, 5, 5);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -78,8 +80,10 @@ function renderVoxels(voxels, res) {
     voxels.length
   );
 
+  // Base representation of a voxel replicated N times on the mesh
   const dummy = new THREE.Object3D();
 
+  // Iterate to render each voxel
   for (let i = 0; i < voxels.length; i++) {
     const voxel = voxels[i];
 
@@ -92,7 +96,10 @@ function renderVoxels(voxels, res) {
     instancedMesh.setColorAt(i, color);
 
     // Position voxel
-    dummy.position.set(voxel.x, voxel.y, voxel.z);
+    const size = voxel.size ?? 1.0; // Preserve scale if size not provided
+    const scale = size / res;
+    dummy.position.set(voxel.x, voxel.y, voxel.z); // Set center
+    dummy.scale.set(scale, scale, scale); // Scale to match pruned octree nodes
     dummy.updateMatrix();
     instancedMesh.setMatrixAt(i, dummy.matrix);
   }

@@ -10,20 +10,27 @@ int main(int argc, char** argv) {
     std::string filename = argv[1];
 
     octomap::AbstractOcTree* tree = octomap::AbstractOcTree::read(filename);
-    auto* colorTree = dynamic_cast<octomap::ColorOcTree*>(tree);
+    auto* color_tree = dynamic_cast<octomap::ColorOcTree*>(tree);
+
+    if (!color_tree) {
+        std::cerr << "File does not contain a ColorOcTree!\n";
+        return 1;
+    }
 
     json j;
-    j["resolution"] = colorTree->getResolution();
+    j["resolution"] = color_tree->getResolution();
     j["voxels"] = json::array();
 
-    for (auto it = colorTree->begin_leafs(), end = colorTree->end_leafs(); it != end; ++it) {
-        if (colorTree->isNodeOccupied(*it)) {
+    for (auto it = color_tree->begin_leafs(), end = color_tree->end_leafs(); it != end; ++it) {
+        if (color_tree->isNodeOccupied(*it)) {
             auto color = it->getColor();
+            double size = color_tree->getNodeSize(it.getDepth());
             j["voxels"].push_back({
                 {"x", it.getX()},
                 {"y", it.getY()},
                 {"z", it.getZ()},
-                {"color", {color.r, color.g, color.b}}
+                {"color", {color.r, color.g, color.b}},
+                {"size", size}
             });
         }
     }
