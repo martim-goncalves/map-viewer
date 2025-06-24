@@ -1,0 +1,9 @@
+# Hidden files
+.git
+.venv
+
+# Python
+__pycache__
+
+# IDE
+.vscode
