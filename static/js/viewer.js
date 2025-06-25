@@ -220,22 +220,18 @@ function renderVoxelsShaded(voxels, res) {
     instancedMesh.setMatrixAt(i, dummy.matrix);
 
     // Set per-instance color in the buffer
-    instancedMesh.instanceColor.setXYZ(
-      i,
-      voxel.color[0] / 255,
-      voxel.color[1] / 255,
-      voxel.color[2] / 255
-    );
+    const rgb = boostColor(...voxel.color, 1.2, 1.7);
+    instancedMesh.instanceColor.setXYZ(i, ...rgb);
   }
 
   instancedMesh.instanceMatrix.needsUpdate = true;
   instancedMesh.instanceColor.needsUpdate = true;
 
   // Lighting setup
-  const tintLight = new THREE.AmbientLight(0xDDFF00, 0.1);
+  const tintLight = new THREE.AmbientLight(0xDDFF00, 0.075);
   scene.add(tintLight);
 
-  const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4);
+  const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.3);
   scene.add(ambientLight);
 
   const directionalLight = new THREE.DirectionalLight(0xF0FEFE, 0.8);
@@ -249,4 +245,18 @@ function renderVoxelsShaded(voxels, res) {
 
   // Add instanced voxels to scene
   scene.add(instancedMesh);
+}
+
+
+// ____________________________________________________________________________
+// Auxiliary functions
+
+function boostColor(r, g, b, gain = 1.2, saturation = 1.3) {
+  const color = new THREE.Color(r / 255, g / 255, b / 255);
+  color.multiplyScalar(gain); // Brightness
+  const hsl = {};
+  color.getHSL(hsl);
+  hsl.s = Math.min(1, hsl.s * saturation); // Saturation cap at 1
+  color.setHSL(hsl.h, hsl.s, hsl.l);
+  return color;
 }
