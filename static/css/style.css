@@ -1,6 +1,7 @@
 body {
   margin: 0;
   overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #upload-island {
@@ -11,7 +12,15 @@ body {
   z-index: 10;
 }
 
-#upload {
+#options-island {
+  /* Positioning */
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.card {
   /* Positioning */
   background: #FFFFFF;
   padding: 8px;

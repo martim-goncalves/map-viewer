@@ -10,11 +10,20 @@
 </head>
 
 <body>
+  <!-- Upload Overlay -->
   <section id="upload-island">
-    <div id="upload">
+    <div id="upload" class="card">
       <input type="file" id="file-input" accept=".bt, .ot"/>
     </div>
   </section>
+  <!-- Options Overlay -->
+  <section id="options-island">
+    <div id="options" class="card">
+      <input id="shading-mode" type="checkbox"/>
+      <label>Enable shading</label>
+    </div>
+  </section>
+  <!-- Renderer Viewport -->
   <canvas id="viewer"></canvas>
 </body>
 
