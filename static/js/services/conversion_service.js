@@ -13,7 +13,7 @@ export async function octomap2json(file) {
   if (!res.ok) {
     const err = await res.text();
     throw new Error(
-      `Conversion failed: ${res.status} ${res.statusText} - ${errorText}`
+      `Conversion failed: ${res.status} ${res.statusText} - ${err}`
     );
   }
 
