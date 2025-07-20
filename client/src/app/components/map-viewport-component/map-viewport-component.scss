@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#upload-island {
+  /* Positioning */
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+#options-island {
+  /* Positioning */
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.card {
+  /* Positioning */
+  background: #FFFFFF;
+  padding: 8px;
+  /* Border */
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  /* Shadow */
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
+}

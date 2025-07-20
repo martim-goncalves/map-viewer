@@ -6,9 +6,22 @@ import subprocess
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
+
+ANGULAR_CLIENT = ['http://localhost:4200', 'http://127.0.0.1:4200']
+
+# CORS Origins
+WHITELIST = [*ANGULAR_CLIENT]
 
 api = FastAPI()
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins = WHITELIST,
+    allow_credentials = True,
+    allow_methods = ["*"],
+    allow_headers = ["*"]
+)
 
 @api.post("/convert/")
 async def convert_octomap(file: UploadFile = File(...)):
