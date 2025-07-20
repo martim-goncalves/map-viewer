@@ -23,7 +23,7 @@ api.add_middleware(
     allow_headers = ["*"]
 )
 
-@api.post("/convert/")
+@api.post("/convert")
 async def convert_octomap(file: UploadFile = File(...)):
     with tempfile.NamedTemporaryFile(delete=False, suffix=".ot") as temp:
         temp.write(await file.read())

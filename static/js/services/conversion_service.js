@@ -4,7 +4,7 @@ export async function octomap2json(file) {
   formData.append('file', file);
 
   // Request converted map (.ot --> .json)
-  const res = await fetch('/convert/', {
+  const res = await fetch('/convert', {
     method: 'POST',
     body: formData
   });
