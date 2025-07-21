@@ -20,6 +20,23 @@ body {
   z-index: 10;
 }
 
+#info-overlay {
+  min-width: 25vw;
+  position: absolute; 
+  bottom: 10px; 
+  left: 10px; 
+  background: rgba(0, 0, 0, 0.5); 
+  color: white; 
+  padding: 8px;
+  font-family: monospace; 
+  font-size: 14px; 
+  /* Border */
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  /* Shadow */
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
 .card {
   /* Positioning */
   background: #FFFFFF;

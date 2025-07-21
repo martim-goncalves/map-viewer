@@ -31,10 +31,22 @@ scene.add(grid);
 const axes = new THREE.AxesHelper(2);
 scene.add(axes);
 
+const cameraPositionElement = document.getElementById('camera-position');
+const cameraRotationElement = document.getElementById('camera-rotation');
+const sceneRotationElement = document.getElementById('scene-rotation');
+
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
+  
+  // Update info
+  const camPos = camera.position;
+  cameraPositionElement.textContent = `Camera Position: X: ${camPos.x.toFixed(2)}, Y: ${camPos.y.toFixed(2)}, Z: ${camPos.z.toFixed(2)}`;
+  const camRot = camera.rotation;
+  cameraRotationElement.textContent = `Camera Rotation: X: ${(camRot.x * 180 / Math.PI).toFixed(2)}°, Y: ${(camRot.y * 180 / Math.PI).toFixed(2)}°, Z: ${(camRot.z * 180 / Math.PI).toFixed(2)}°`;
+  const scnRot = scene.rotation;
+  sceneRotationElement.textContent = `Scene Rotation: X: ${(scnRot.x * 180 / Math.PI).toFixed(2)}°, Y: ${(scnRot.y * 180 / Math.PI).toFixed(2)}°, Z: ${(scnRot.z * 180 / Math.PI).toFixed(2)}°`;
 }
 
 animate();
