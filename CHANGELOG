@@ -1,14 +1,21 @@
 # Changelog
 
+## 0.0.0 - 2025-07-21
+### [MINIMAL](./static/) CLIENT
++ Added an overlay to display camera position and camera and scene rotations.
+
+### [FASTAPI](./server/) SERVER
++ Place down architecture to support authentication down the line.
+
 ## 0.0.0 - 2025-07-20
 ### [ANGULAR](./client/) CLIENT
 + Introduced Angular client:
-  * Created the MapViewportComponent;
+  * Created the MapViewportComponent:
     - Encapsulated Three.js logic in a map renderer class;
     - Exposed API calls for map conversion using a service;
     - Edited `app.config.ts` and `app.routes.ts` to correct routing, provide the `HttpClient` with `fetch` API;
     - Set up `proxy.conf.json` and `angular.json` to allow CORS. 
 
 ### [FASTAPI](./server/) SERVER
-+ Create an origins whitelist for CORS middleware
-+ Added Angular client origin to the CORS whitelist 
++ Create an origins whitelist for CORS middleware;
++ Added Angular client origin to the CORS whitelist. 
