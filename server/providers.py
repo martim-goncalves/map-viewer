@@ -11,7 +11,7 @@ from sqlmodel import SQLModel, Session, create_engine
 from .data.dao.user_dao import UserDao
 
 
-DATABASE_URL = "sqlite:///./users.db"
+DATABASE_URL = "sqlite:///./.sqlite3"
 engine = create_engine(DATABASE_URL, echo=True)
 
 def create_db_and_tables():

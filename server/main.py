@@ -16,7 +16,7 @@ from .domain.services.auth_service import auth_srvc
 
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(_: FastAPI):
     create_db_and_tables()
     yield
     ...
