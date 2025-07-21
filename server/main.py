@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import os
 import json
 import tempfile
@@ -9,12 +10,18 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 
-ANGULAR_CLIENT = ['http://localhost:4200', 'http://127.0.0.1:4200']
+from .providers import create_db_and_tables
+from .whitelist import WHITELIST
+from .domain.services.auth_service import auth_srvc
 
-# CORS Origins
-WHITELIST = [*ANGULAR_CLIENT]
 
-api = FastAPI()
+@asynccontextmanager
+async def lifespan():
+    create_db_and_tables()
+    yield
+    ...
+
+api = FastAPI(lifespan=lifespan)
 api.add_middleware(
     CORSMiddleware,
     allow_origins = WHITELIST,
@@ -43,4 +50,9 @@ async def convert_octomap(file: UploadFile = File(...)):
     finally:
         os.unlink(temp_path)
 
+
+# _____________________________________________________________________________
+# Mount routers and static files
+
+api.include_router(auth_srvc)
 api.mount('/', StaticFiles(directory='static', html=True), name='static')
