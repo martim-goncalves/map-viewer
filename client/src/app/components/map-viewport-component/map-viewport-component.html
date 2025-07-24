@@ -5,8 +5,37 @@
 </section>
 <section id="options-island">
   <div id="options" class="card">
-    <input id="shading-mode" type="checkbox" [checked]="shadingEnabled" (change)="handleShadingModeToggle($event.target.checked)" />
-    <label for="shading-mode">Enable shading</label>
-  </div>
+
+      <!-- Shading Options -->
+      <div>
+        <label>Shading</label> <br>
+        <input id="shading-mode" type="checkbox" [checked]="shadingEnabled" (change)="handleShadingModeToggle($event.target.checked)" />
+        <label for="shading-mode">Enable</label>
+      </div>
+      
+      <!-- Camera Projection -->
+      <hr> <div>
+        <label>Camera Projection</label> <br>
+        <!-- Btn 1 -->
+        <input
+          type="radio"
+          id="perspective-selector"
+          name="cameraProjection"
+          [value]="Projection.PERSPECTIVE"
+          (change)="handleCameraProjectionToggle(Projection.PERSPECTIVE)"
+        />
+        <label for="perspective-selector">Perspective</label> <br>
+        <!-- Btn 2 -->
+        <input
+          type="radio"
+          id="orthographic-selector"
+          name="cameraProjection"
+          [value]="Projection.ORTHOGRAPHIC"
+          (change)="handleCameraProjectionToggle(Projection.ORTHOGRAPHIC)"
+        />
+        <label for="orthographic-selector">Orthographic</label>
+      </div>
+
+    </div>
 </section>
 <canvas #viewerCanvas id="viewer"></canvas>

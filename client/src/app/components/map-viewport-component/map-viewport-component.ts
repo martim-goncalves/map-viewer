@@ -15,8 +15,9 @@ import { fromEvent, lastValueFrom, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ConversionService } from '../../services/conversion-service';
-import { MapRenderer } from '../../model/map-renderer';
+import { MapRenderer } from '../../model/map/map-renderer';
 import { isPlatformBrowser } from '@angular/common';
+import { Projection } from '../../model/map/projection';
 
 @Component({
   selector: 'app-map-viewport-component',
@@ -25,6 +26,8 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrl: './map-viewport-component.scss'
 })
 export class MapViewportComponent implements OnInit, OnDestroy {
+
+  public Projection = Projection;
 
   private platformIsBrowser: boolean;
 
@@ -107,14 +110,18 @@ export class MapViewportComponent implements OnInit, OnDestroy {
     this.shadingEnabledChange.emit(this.shadingEnabled);
     if (!this.renderer.hasMap()) {
       if (this.shadingEnabled) {
+        // TODO Check more 'Angulary' way to show messages (e.g., MatSnackBar)
         const message = 'No map data to render.';
         console.warn(message);
-        // TODO Check more 'Angulary' way to show messages (e.g., MatSnackBar)
         alert(message);
       }
       return;
     }
     this.renderer.renderVoxels(this.shadingEnabled);
+  }
+
+  handleCameraProjectionToggle(mode: Projection): void {
+    this.renderer.setCameraProjectionMode(mode);
   }
 
   private handleSetFocus(event: MouseEvent): void {

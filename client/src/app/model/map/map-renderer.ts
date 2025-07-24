@@ -5,12 +5,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { MapData } from "./map-data";
 import { VoxelData } from "./voxel-data";
+import { Map } from "./map";
+import { RegionBounds } from "./region-bounds";
+import { Projection } from "./projection";
 
 export class MapRenderer {
 
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
+  private camera!: THREE.Camera;
+  private perspectiveCamera!: THREE.PerspectiveCamera;
+  private orthographicCamera!: THREE.OrthographicCamera;
   private controls!: OrbitControls;
   private grid!: THREE.GridHelper;
   private axes!: THREE.AxesHelper;
@@ -18,9 +23,12 @@ export class MapRenderer {
 
   public getDomElement = () => this.renderer.domElement;
 
-  private map: MapData | null = null;
-  public setMap = (map: MapData) => { this.map = map; }
-  public hasMap = () => this.map != null ;
+  private map!: Map;
+  public setMap(map: MapData): void { this.map = new Map(map); }
+  public hasMap = () => this.map != null;
+  public setBounds(bounds: RegionBounds): void { this.map.select(bounds); }
+
+  private cameraProjection: Projection = Projection.PERSPECTIVE;
 
   /**
    * Arrow functions capture the lexical `this` - the value of it for their 
@@ -37,9 +45,19 @@ export class MapRenderer {
   }
 
   public resize(cameraAspect: number, rendererSize: number[]): void {
+    // Window Dimensions
     const [width, height] = rendererSize;
-    this.camera.aspect = cameraAspect;
-    this.camera.updateProjectionMatrix();
+    // Perspective
+    this.perspectiveCamera.aspect = cameraAspect;
+    this.perspectiveCamera.updateProjectionMatrix();
+    // Ortho
+    const frustumSize = 10;
+    this.orthographicCamera.left = (frustumSize * cameraAspect) / -2;
+    this.orthographicCamera.right = (frustumSize * cameraAspect) / 2;
+    this.orthographicCamera.top = frustumSize / 2;
+    this.orthographicCamera.bottom = frustumSize / -2;
+    this.orthographicCamera.updateProjectionMatrix();
+    // General    
     this.renderer.setSize(width, height);
   }
 
@@ -55,13 +73,25 @@ export class MapRenderer {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xf0f0f0);
 
-    this.camera = new THREE.PerspectiveCamera(
-      60,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      100
+    // Perspective camera setup
+    this.perspectiveCamera = new THREE.PerspectiveCamera(
+      60, window.innerWidth / window.innerHeight, 0.1, 100
     );
-    this.camera.position.set(5, 5, 5);
+    this.perspectiveCamera.position.set(5, 5, 5);
+
+    // Orthographic camera setup
+    const aspect = window.innerWidth / window.innerHeight;
+    const frustumSize = 10;
+    this.orthographicCamera = new THREE.OrthographicCamera(
+      (frustumSize * aspect) / -2, (frustumSize * aspect) / 2, 
+      frustumSize / 2, frustumSize / -2, 0.1, 100
+    );
+    this.orthographicCamera.position.set(5, 5, 5);
+
+    // Camera assignment
+    this.camera = this.cameraProjection === Projection.PERSPECTIVE
+      ? this.perspectiveCamera
+      : this.orthographicCamera;
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.update();
@@ -83,10 +113,19 @@ export class MapRenderer {
 
   public renderVoxels(shaded: boolean): void {
     if (!this.map) return;
+    // [HACK] --- Experimental voxel culling ---
+    this.map.select({
+      minX: -1000, maxX: 5,
+      minY: -1000, maxY: 1000,
+      minZ: -1000, maxZ: 4
+    });
+    // [HACK] --- Experimental voxel culling ---
+    const mapData = this.map.getMap();
+    console.info(`Selected voxels: ${mapData.voxels.length}`);
     if (!shaded) {
-      this.renderVoxelsRaw(this.map.voxels, this.map.resolution);
+      this.renderVoxelsRaw(mapData.voxels, mapData.resolution);
     } else {
-      this.renderVoxelsShaded(this.map.voxels, this.map.resolution);
+      this.renderVoxelsShaded(mapData.voxels, mapData.resolution);
     }
   }
 
@@ -149,8 +188,7 @@ export class MapRenderer {
       voxels.length
     );
     instancedMesh.instanceColor = new THREE.InstancedBufferAttribute(
-      new Float32Array(voxels.length * 3),
-      3
+      new Float32Array(voxels.length * 3), 3
     );
 
     const dummy = new THREE.Object3D();
@@ -214,7 +252,7 @@ export class MapRenderer {
   ): THREE.Color {
     const color = new THREE.Color(r / 255, g / 255, b / 255);
     color.multiplyScalar(gain);
-    const hsl = { h: 0, s: 0, l: 0 }; // Initialize hsl object
+    const hsl = { h: 0, s: 0, l: 0 };
     color.getHSL(hsl);
     hsl.s = Math.min(1, hsl.s * saturation);
     color.setHSL(hsl.h, hsl.s, hsl.l);
@@ -237,6 +275,31 @@ export class MapRenderer {
       this.controls.target.copy(point);
       this.controls.update();
     }
+  }
+
+  public setCameraProjectionMode(projectionMode: Projection): void {
+    if (this.cameraProjection === projectionMode) return;
+    
+    const oldCamera = this.camera;
+    this.cameraProjection = projectionMode;
+
+    switch(this.cameraProjection) {
+      case Projection.PERSPECTIVE:
+        this.camera = this.perspectiveCamera;
+        break;
+      case Projection.ORTHOGRAPHIC:
+        this.camera = this.orthographicCamera;
+        break;
+      default:
+        console.error(
+          `MapRenderer - Invalid projection mode provided ${projectionMode}`
+        );
+    }
+    
+    this.camera.position.copy(oldCamera.position);
+    this.camera.quaternion.copy(oldCamera.quaternion);
+    this.controls.object = this.camera;
+    this.controls.update();
   }
 
 }

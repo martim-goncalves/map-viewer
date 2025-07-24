@@ -1,7 +1,9 @@
-body {
-  margin: 0;
-  overflow: hidden;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+hr
+{
+    background-color: #E0E0E0;
+    border: 0 none;
+    color: #E0E0E0;
+    height: 2px;
 }
 
 #upload-island {
@@ -13,11 +15,16 @@ body {
 }
 
 #options-island {
+  min-width: 15vw;
   /* Positioning */
   position: absolute;
   bottom: 10px;
   right: 10px;
   z-index: 10;
+}
+
+#perspective-selector, #orthographic-selector, #shading-mode {
+  margin-left: 24px;
 }
 
 .card {
