@@ -17,7 +17,7 @@
       <hr> <div>
         <label>Camera Projection</label> <br>
         <!-- Btn 1 -->
-        <input
+        <input checked
           type="radio"
           id="perspective-selector"
           name="cameraProjection"
@@ -35,6 +35,27 @@
         />
         <label for="orthographic-selector">Orthographic</label>
       </div>
+
+      <hr> <div>
+          <label>Region Bounds</label>
+          <div class="bbox-inputs">
+            <div class="bbox-row">
+              <span>X</span> 
+              <input type="number" [(ngModel)]="bbox.minX" (change)="handleBoundsChange()"> 
+              <input type="number" [(ngModel)]="bbox.maxX" (change)="handleBoundsChange()">
+            </div>
+            <div class="bbox-row">
+              <span>Y</span> 
+              <input type="number" [(ngModel)]="bbox.minY" (change)="handleBoundsChange()"> 
+              <input type="number" [(ngModel)]="bbox.maxY" (change)="handleBoundsChange()">
+            </div>
+            <div class="bbox-row">
+              <span>Z</span> 
+              <input type="number" [(ngModel)]="bbox.minZ" (change)="handleBoundsChange()">
+              <input type="number" [(ngModel)]="bbox.maxZ" (change)="handleBoundsChange()">
+            </div>
+          </div>
+        </div>
 
     </div>
 </section>

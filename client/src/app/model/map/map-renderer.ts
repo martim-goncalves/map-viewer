@@ -26,7 +26,8 @@ export class MapRenderer {
   private map!: Map;
   public setMap(map: MapData): void { this.map = new Map(map); }
   public hasMap = () => this.map != null;
-  public setBounds(bounds: RegionBounds): void { this.map.select(bounds); }
+  public setBounds(bounds: RegionBounds): void { this.map?.select(bounds); }
+  public clearBounds(): void { this.map?.deselect(); }
 
   private cameraProjection: Projection = Projection.PERSPECTIVE;
 
@@ -113,13 +114,6 @@ export class MapRenderer {
 
   public renderVoxels(shaded: boolean): void {
     if (!this.map) return;
-    // [HACK] --- Experimental voxel culling ---
-    this.map.select({
-      minX: -1000, maxX: 5,
-      minY: -1000, maxY: 1000,
-      minZ: -1000, maxZ: 4
-    });
-    // [HACK] --- Experimental voxel culling ---
     const mapData = this.map.getMap();
     console.info(`Selected voxels: ${mapData.voxels.length}`);
     if (!shaded) {

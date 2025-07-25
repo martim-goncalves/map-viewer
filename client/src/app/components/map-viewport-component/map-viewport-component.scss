@@ -36,3 +36,29 @@ hr {
   /* Shadow */
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
 }
+
+.bbox-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Space between rows */
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.bbox-row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr; /* Label, Input, Input */
+  align-items: center;
+  gap: 8px;
+}
+
+.bbox-row > span {
+  padding: 0 8px;
+}
+
+.bbox-inputs input[type="number"] {
+  width: auto;
+  padding: 4px;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+}

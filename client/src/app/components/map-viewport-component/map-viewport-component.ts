@@ -18,10 +18,12 @@ import { ConversionService } from '../../services/conversion-service';
 import { MapRenderer } from '../../model/map/map-renderer';
 import { isPlatformBrowser } from '@angular/common';
 import { Projection } from '../../model/map/projection';
+import { RegionBounds } from '../../model/map/region-bounds';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-map-viewport-component',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './map-viewport-component.html',
   styleUrl: './map-viewport-component.scss'
 })
@@ -41,11 +43,18 @@ export class MapViewportComponent implements OnInit, OnDestroy {
   private renderer!: MapRenderer;
   private destroy$ = new Subject<void>();
 
+  bbox: RegionBounds;
+
   constructor(
     private conversionSrvc: ConversionService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.platformIsBrowser = isPlatformBrowser(platformId);
+    this.bbox = { 
+      minX: 0, maxX: 0, 
+      minY: 0, maxY: 0, 
+      minZ: 0, maxZ: 0 
+    };
   }
 
   ngOnInit(): void {
@@ -126,6 +135,23 @@ export class MapViewportComponent implements OnInit, OnDestroy {
 
   private handleSetFocus(event: MouseEvent): void {
     this.renderer.changeFocus(event);
+  }
+
+  handleBoundsChange(): void {
+    const header = 'MapViewportComponent - Region Bounds:';
+    const message = `${header} ${JSON.stringify(this.bbox)}`;
+    const bboxValid = this.bbox.minX < this.bbox.maxX ||
+                      this.bbox.minY < this.bbox.maxY || 
+                      this.bbox.minZ < this.bbox.maxZ;
+    if (bboxValid) {
+      this.renderer.setBounds(this.bbox);
+      this.renderer.renderVoxels(this.shadingEnabled);
+      console.debug(message);
+    } else {
+      this.renderer.clearBounds();
+      this.renderer.renderVoxels(this.shadingEnabled);
+      console.debug(header, 'Cleared');
+    }
   }
 
 }
