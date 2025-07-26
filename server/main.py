@@ -7,11 +7,8 @@ import subprocess
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-
 
 from .providers import create_db_and_tables
-from .whitelist import WHITELIST
 from .domain.services.auth_service import auth_srvc
 
 
@@ -22,13 +19,6 @@ async def lifespan(_: FastAPI):
     ...
 
 api = FastAPI(lifespan=lifespan)
-api.add_middleware(
-    CORSMiddleware,
-    allow_origins = WHITELIST,
-    allow_credentials = True,
-    allow_methods = ["*"],
-    allow_headers = ["*"]
-)
 
 @api.post("/convert")
 async def convert_octomap(file: UploadFile = File(...)):

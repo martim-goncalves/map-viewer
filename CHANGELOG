@@ -1,11 +1,27 @@
 # Changelog
 
+
+## 0.0.0 - 2025-07-26
+### [ANGULAR](./client/) CLIENT
++ Disable CORS.
+
+### [FASTAPI](./server/) SERVER
++ Disable allowed CORS;
++ Mount compiled Angular client's static files.
+
+
+## 0.0.0 - 2025-07-25
+### [ANGULAR](./client/) CLIENT
++ Create map region selection feature with bounding box controls.
+
+
 ## 0.0.0 - 2025-07-21
 ### [MINIMAL](./static/) CLIENT
 + Added an overlay to display camera position and camera and scene rotations.
 
 ### [FASTAPI](./server/) SERVER
 + Place down architecture to support authentication down the line.
+
 
 ## 0.0.0 - 2025-07-20
 ### [ANGULAR](./client/) CLIENT
