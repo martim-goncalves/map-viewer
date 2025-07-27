@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
 } // g++ -std=c++17 -static -I/path/include octomap2json.cpp -L/path/lib -loctomap -loctomath -o octomap2json
 ```
 
+
 ## 3. Apache Deployment
 
 ### 3.1. Client & Server Placement
@@ -131,9 +132,6 @@ sudo chown -R www-data:www-data /var/www/html/
     ProxyPreserveHost On
     ProxyPass /api http://127.0.0.1:8000/api
     ProxyPassReverse /api http://127.0.0.1:8000/api
-
-    ErrorLog /home/martim/logs/speleolabs.log
-    CustomLog /home/martim/logs/speleolabs_access.log combined
 </VirtualHost>
 ```
 
@@ -165,4 +163,10 @@ RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable speleolabs-api
+sudo systemctl start speleolabs-api
 ```
