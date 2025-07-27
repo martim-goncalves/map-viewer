@@ -19,7 +19,7 @@ export class ConversionService {
   public octomap2json(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<any>('/convert', formData).pipe(
+    return this.http.post<any>('/api/convert', formData).pipe(
       catchError(error => {
         let errorMessage = `Conversion failed: ${error.status} ${error.statusText}`;
         if (error.error && typeof error.error === 'string') {

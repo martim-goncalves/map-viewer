@@ -20,7 +20,7 @@ async def lifespan(_: FastAPI):
 
 api = FastAPI(lifespan=lifespan)
 
-@api.post("/convert")
+@api.post("/api/convert")
 async def convert_octomap(file: UploadFile = File(...)):
     with tempfile.NamedTemporaryFile(delete=False, suffix=".ot") as temp:
         temp.write(await file.read())
@@ -44,5 +44,9 @@ async def convert_octomap(file: UploadFile = File(...)):
 # _____________________________________________________________________________
 # Mount routers and static files
 
-api.include_router(auth_srvc)
-api.mount('/', StaticFiles(directory='static', html=True), name='static')
+api.include_router(auth_srvc, prefix='/api')
+api.mount(
+    '/api/viewer', 
+    StaticFiles(directory='static', html=True), 
+    name = 'static'
+)
