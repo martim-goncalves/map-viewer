@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
+import { MapData } from '../model/map/map-data';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,12 @@ export class ConversionService {
         return throwError(() => new Error(errorMessage));
       })
     );
+  }
+
+  public exportMap(mapData: MapData): Observable<Blob> {
+    return this.http.post('/api/export', mapData, {
+      responseType: 'blob'
+    });
   }
 
 }

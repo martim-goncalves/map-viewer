@@ -1,62 +1,9 @@
 <section id="upload-island">
   <div id="upload" class="card">
-    <input type="file" id="file-input" accept=".bt, .ot" (change)="handleFileInput($event)" />
+    <input type="file" id="file-input" accept=".ot" (change)="handleFileInput($event)" />
   </div>
 </section>
 <section id="options-island">
-  <div id="options" class="card">
-
-      <!-- Shading Options -->
-      <div>
-        <label>Shading</label> <br>
-        <input id="shading-mode" type="checkbox" [checked]="shadingEnabled" (change)="handleShadingModeToggle($event.target.checked)" />
-        <label for="shading-mode">Enable</label>
-      </div>
-      
-      <!-- Camera Projection -->
-      <hr> <div>
-        <label>Camera Projection</label> <br>
-        <!-- Btn 1 -->
-        <input checked
-          type="radio"
-          id="perspective-selector"
-          name="cameraProjection"
-          [value]="Projection.PERSPECTIVE"
-          (change)="handleCameraProjectionToggle(Projection.PERSPECTIVE)"
-        />
-        <label for="perspective-selector">Perspective</label> <br>
-        <!-- Btn 2 -->
-        <input
-          type="radio"
-          id="orthographic-selector"
-          name="cameraProjection"
-          [value]="Projection.ORTHOGRAPHIC"
-          (change)="handleCameraProjectionToggle(Projection.ORTHOGRAPHIC)"
-        />
-        <label for="orthographic-selector">Orthographic</label>
-      </div>
-
-      <hr> <div>
-          <label>Region Bounds</label>
-          <div class="bbox-inputs">
-            <div class="bbox-row">
-              <span>X</span> 
-              <input type="number" [(ngModel)]="bbox.minX" (change)="handleBoundsChange()"> 
-              <input type="number" [(ngModel)]="bbox.maxX" (change)="handleBoundsChange()">
-            </div>
-            <div class="bbox-row">
-              <span>Y</span> 
-              <input type="number" [(ngModel)]="bbox.minY" (change)="handleBoundsChange()"> 
-              <input type="number" [(ngModel)]="bbox.maxY" (change)="handleBoundsChange()">
-            </div>
-            <div class="bbox-row">
-              <span>Z</span> 
-              <input type="number" [(ngModel)]="bbox.minZ" (change)="handleBoundsChange()">
-              <input type="number" [(ngModel)]="bbox.maxZ" (change)="handleBoundsChange()">
-            </div>
-          </div>
-        </div>
-
-    </div>
+  <app-map-options-component (export)="handleExport()"></app-map-options-component>
 </section>
 <canvas #viewerCanvas id="viewer"></canvas>

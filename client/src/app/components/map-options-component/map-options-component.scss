@@ -1,0 +1,47 @@
+.card {
+  /* Positioning */
+  background: #FFFFFF;
+  padding: 8px;
+  /* Border */
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  /* Shadow */
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+hr {
+    background-color: #E0E0E0;
+    border: 0 none;
+    color: #E0E0E0;
+    height: 2px;
+}
+
+#perspective-selector, #orthographic-selector, #shading-mode {
+  margin-left: 24px;
+}
+
+.bbox-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Space between rows */
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.bbox-row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr; /* Label, Input, Input */
+  align-items: center;
+  gap: 8px;
+}
+
+.bbox-row > span {
+  padding: 0 8px;
+}
+
+.bbox-inputs input[type="number"] {
+  width: auto;
+  padding: 4px;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+}

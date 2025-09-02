@@ -4,11 +4,12 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
-  Input,
-  Output,
-  EventEmitter,
   Inject,
   PLATFORM_ID,
+  AfterViewInit,
+  effect,
+  Injector,
+  runInInjectionContext
 } from '@angular/core';
 
 import { fromEvent, lastValueFrom, Subject } from 'rxjs';
@@ -17,44 +18,33 @@ import { takeUntil } from 'rxjs/operators';
 import { ConversionService } from '../../services/conversion-service';
 import { MapRenderer } from '../../model/map/map-renderer';
 import { isPlatformBrowser } from '@angular/common';
-import { Projection } from '../../model/map/projection';
-import { RegionBounds } from '../../model/map/region-bounds';
-import { FormsModule } from '@angular/forms';
+import { MapOptionsComponent } from '../map-options-component/map-options-component';
 
 @Component({
   selector: 'app-map-viewport-component',
-  imports: [FormsModule],
+  imports: [MapOptionsComponent],
   templateUrl: './map-viewport-component.html',
   styleUrl: './map-viewport-component.scss'
 })
-export class MapViewportComponent implements OnInit, OnDestroy {
-
-  public Projection = Projection;
+export class MapViewportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private platformIsBrowser: boolean;
 
   @ViewChild('viewerCanvas', { static: true })
   viewerCanvas!: ElementRef<HTMLCanvasElement>;
 
-  @Input() shadingEnabled: boolean = false;
-  @Output() shadingEnabledChange = new EventEmitter<boolean>();
-  @Output() conversionError = new EventEmitter<string>();
+  @ViewChild(MapOptionsComponent)
+  mapOptions!: MapOptionsComponent;
 
   private renderer!: MapRenderer;
   private destroy$ = new Subject<void>();
 
-  bbox: RegionBounds;
-
   constructor(
     private conversionSrvc: ConversionService,
-    @Inject(PLATFORM_ID) platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object,
+    private injector: Injector
   ) {
     this.platformIsBrowser = isPlatformBrowser(platformId);
-    this.bbox = { 
-      minX: 0, maxX: 0, 
-      minY: 0, maxY: 0, 
-      minZ: 0, maxZ: 0 
-    };
   }
 
   ngOnInit(): void {
@@ -67,6 +57,43 @@ export class MapViewportComponent implements OnInit, OnDestroy {
         '[MapViewportComponent] - (Lazy Renderer): Not running on the',
         'browser, Three.js will not be initialized.'
       );
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.platformIsBrowser) {
+      runInInjectionContext(this.injector, () => {
+        // Effect for shading
+        effect(() => {
+          const shadingEnabled = this.mapOptions.shadingEnabled();
+          this.renderer.renderVoxels(shadingEnabled);
+        });
+
+        // Effect for camera projection
+        effect(() => {
+          const projectionMode = this.mapOptions.camProjectMode();
+          this.renderer.setCameraProjectionMode(projectionMode);
+        });
+
+        // Effect for bounds
+        effect(() => {
+          const bounds = this.mapOptions.selectedBounds();
+          const header = 'MapViewportComponent - Region Bounds:';
+          const message = `${header} ${JSON.stringify(bounds)}`;
+          const bboxValid = bounds.minX < bounds.maxX ||
+                            bounds.minY < bounds.maxY ||
+                            bounds.minZ < bounds.maxZ;
+          if (bboxValid) {
+            this.renderer.setBounds(bounds);
+            this.renderer.renderVoxels(this.mapOptions.shadingEnabled());
+            console.debug(message);
+          } else {
+            this.renderer.clearBounds();
+            this.renderer.renderVoxels(this.mapOptions.shadingEnabled());
+            console.debug(header, 'Cleared');
+          }
+        });
+      });
     }
   }
 
@@ -99,59 +126,40 @@ export class MapViewportComponent implements OnInit, OnDestroy {
     if (!file) return;
 
     try {
-      // Use the Angular service for conversion
       const json = await lastValueFrom(this.conversionSrvc.octomap2json(file));
       if (!json?.voxels || !json?.resolution) {
         console.error('Invalid JSON response:', json);
-        this.conversionError.emit('Invalid JSON response from conversion.');
         return;
       }
       this.renderer.setMap(json);
-      this.renderer.renderVoxels(this.shadingEnabled);
+      this.renderer.renderVoxels(this.mapOptions.shadingEnabled());
     } catch (err: any) {
       console.error('Conversion error:', err);
-      this.conversionError.emit(err.message || 'Unknown conversion error.');
     }
   }
 
-  handleShadingModeToggle(checked: boolean): void {
-    this.shadingEnabled = checked;
-    this.shadingEnabledChange.emit(this.shadingEnabled);
+  handleExport(): void {
     if (!this.renderer.hasMap()) {
-      if (this.shadingEnabled) {
-        // TODO Check more 'Angulary' way to show messages (e.g., MatSnackBar)
-        const message = 'No map data to render.';
-        console.warn(message);
-        alert(message);
-      }
+      alert('No map data to export.');
       return;
     }
-    this.renderer.renderVoxels(this.shadingEnabled);
-  }
 
-  handleCameraProjectionToggle(mode: Projection): void {
-    this.renderer.setCameraProjectionMode(mode);
+    const mapData = this.renderer.getMapData();
+    if (mapData) {
+      this.conversionSrvc.exportMap(mapData).subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'map-export.zip';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      });
+    }
   }
 
   private handleSetFocus(event: MouseEvent): void {
     this.renderer.changeFocus(event);
   }
-
-  handleBoundsChange(): void {
-    const header = 'MapViewportComponent - Region Bounds:';
-    const message = `${header} ${JSON.stringify(this.bbox)}`;
-    const bboxValid = this.bbox.minX < this.bbox.maxX ||
-                      this.bbox.minY < this.bbox.maxY || 
-                      this.bbox.minZ < this.bbox.maxZ;
-    if (bboxValid) {
-      this.renderer.setBounds(this.bbox);
-      this.renderer.renderVoxels(this.shadingEnabled);
-      console.debug(message);
-    } else {
-      this.renderer.clearBounds();
-      this.renderer.renderVoxels(this.shadingEnabled);
-      console.debug(header, 'Cleared');
-    }
-  }
-
 }

@@ -26,6 +26,7 @@ export class MapRenderer {
   private map!: Map;
   public setMap(map: MapData): void { this.map = new Map(map); }
   public hasMap = () => this.map != null;
+  public getMapData = (): MapData | null => this.hasMap() ? this.map.getMap() : null;
   public setBounds(bounds: RegionBounds): void { this.map?.select(bounds); }
   public clearBounds(): void { this.map?.deselect(); }
 

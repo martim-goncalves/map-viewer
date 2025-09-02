@@ -1,0 +1,54 @@
+<div id="options" class="card">
+  <div>
+    <label>Shading</label> <br>
+    <input id="shading-mode" type="checkbox" [checked]="shadingEnabled()" (change)="handleShadingModeToggle($event)" />
+    <label for="shading-mode">Enable</label>
+  </div>
+  
+  <hr> <div>
+    <label>Camera Projection</label> <br>
+    <input
+      type="radio"
+      id="perspective-selector"
+      name="cameraProjection"
+      [value]="Projection.PERSPECTIVE"
+      [checked]="camProjectMode() === Projection.PERSPECTIVE"
+      (change)="handleCameraProjectionToggle(Projection.PERSPECTIVE)"
+    />
+    <label for="perspective-selector">Perspective</label> <br>
+    <input
+      type="radio"
+      id="orthographic-selector"
+      name="cameraProjection"
+      [value]="Projection.ORTHOGRAPHIC"
+      [checked]="camProjectMode() === Projection.ORTHOGRAPHIC"
+      (change)="handleCameraProjectionToggle(Projection.ORTHOGRAPHIC)"
+    />
+    <label for="orthographic-selector">Orthographic</label>
+  </div>
+
+  <hr> <div>
+      <label>Region Bounds</label>
+      <div class="bbox-inputs">
+        <div class="bbox-row">
+          <span>X</span> 
+          <input type="number" [value]="selectedBounds().minX" (input)="updateBounds('minX', $event)">
+          <input type="number" [value]="selectedBounds().maxX" (input)="updateBounds('maxX', $event)">
+        </div>
+        <div class="bbox-row">
+          <span>Y</span> 
+          <input type="number" [value]="selectedBounds().minY" (input)="updateBounds('minY', $event)">
+          <input type="number" [value]="selectedBounds().maxY" (input)="updateBounds('maxY', $event)">
+        </div>
+        <div class="bbox-row">
+          <span>Z</span> 
+          <input type="number" [value]="selectedBounds().minZ" (input)="updateBounds('minZ', $event)">
+          <input type="number" [value]="selectedBounds().maxZ" (input)="updateBounds('maxZ', $event)">
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div>
+      <button (click)="export.emit()">Export</button>
+    </div>
+</div>
