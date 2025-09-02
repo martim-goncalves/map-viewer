@@ -100,8 +100,8 @@ def _generate_voxel_mesh_ply(map_data: MapData) -> str:
         x, y, z = voxel.x, voxel.y, voxel.z
         r, g, b = voxel.color
         
-        # Assuming color is [0, 1], converting to [0, 255]
-        r_int, g_int, b_int = int(r * 255), int(g * 255), int(b * 255)
+        # Assuming color is [0, 255]
+        r_int, g_int, b_int = int(r), int(g), int(b)
 
         # Vertices
         vertices = [
@@ -154,7 +154,7 @@ def _generate_simple_mesh_ply(map_data: MapData) -> str:
     for voxel in map_data.voxels:
         x, y, z = voxel.x, voxel.y, voxel.z
         r, g, b = voxel.color
-        r_int, g_int, b_int = int(r * 255), int(g * 255), int(b * 255)
+        r_int, g_int, b_int = int(r), int(g), int(b)
         vertex_lines.append(f"{x} {y} {z} {r_int} {g_int} {b_int}")
 
     return "\n".join(header + vertex_lines)
