@@ -2,3 +2,5 @@ fastapi[standard]==0.115.13
 sqlmodel==0.0.24
 passlib==1.7.4
 gunicorn==23.0.0
+laspy==2.6.1
+laszip==0.2.3
