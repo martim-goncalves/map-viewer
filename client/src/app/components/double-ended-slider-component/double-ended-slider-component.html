@@ -1,0 +1,38 @@
+<div class="double-ended-slider-container">
+  
+  <!-- :: Reset -->
+  <button class="slider-label-button" (click)="reset()">{{ label }}</button>
+  <!-- :. Reset -->
+
+  <!-- :: Slider -->
+  <div class="slider-wrapper">
+    <input
+      type="range"
+      [min]="min"
+      [max]="max"
+      [value]="lowerValue()"
+      (input)="onLowerValueChange($event)"
+      class="slider lower-slider"
+    />
+    <input
+      type="range"
+      [min]="min"
+      [max]="max"
+      [value]="upperValue()"
+      (input)="onUpperValueChange($event)"
+      class="slider upper-slider"
+    />
+    <div class="slider-track"></div>
+    <div class="slider-fill" [style.left.%]="((lowerValue() - min) / (max - min)) * 100" [style.width.%]="((upperValue() - lowerValue()) / (max - min)) * 100"></div>
+    <div class="slider-thumb lower-thumb" [style.left.%]="((lowerValue() - min) / (max - min)) * 100">
+      <span class="value-label">{{ lowerValue() }}</span>
+    </div>
+    <div class="slider-thumb upper-thumb" [style.left.%]="((upperValue() - min) / (max - min)) * 100">
+      <span class="value-label">{{ upperValue() }}</span>
+    </div>
+  </div>
+  <!-- :. Slider -->
+
+  <!-- TODO Set Range Expression (e.g., [-1..*]) -->
+
+</div>

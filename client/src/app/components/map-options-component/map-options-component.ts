@@ -21,6 +21,7 @@ export class MapOptionsComponent {
     minY: 0, maxY: 0,
     minZ: 0, maxZ: 0
   });
+  setBounds(bounds: RegionBounds): void { this.selectedBounds.set(bounds); }
 
   handleShadingModeToggle(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;

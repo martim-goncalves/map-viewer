@@ -11,6 +11,8 @@ import { Projection } from "./projection";
 
 export class MapRenderer {
 
+  // TODO Make MapRenderer use the map via arguments instead of composition.
+
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
   private camera!: THREE.Camera;
@@ -25,6 +27,7 @@ export class MapRenderer {
 
   private map!: Map;
   public setMap(map: MapData): void { this.map = new Map(map); }
+  public getMap = (): Map => this.map;
   public hasMap = () => this.map != null;
   public getMapData = (): MapData | null => this.hasMap() ? this.map.getMap() : null;
   public setBounds(bounds: RegionBounds): void { this.map?.select(bounds); }

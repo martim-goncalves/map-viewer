@@ -133,6 +133,8 @@ export class MapViewportComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.renderer.setMap(json);
       this.renderer.renderVoxels(this.mapOptions.shadingEnabled());
+      // HACK
+      this.mapOptions.setBounds(this.renderer.getMap().getBounds());
     } catch (err: any) {
       console.error('Conversion error:', err);
     }
